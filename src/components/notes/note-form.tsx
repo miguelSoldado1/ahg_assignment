@@ -69,7 +69,6 @@ export function NoteForm() {
                   placeholder="Enter note title"
                   aria-invalid={fieldState.invalid}
                   disabled={form.formState.isSubmitting}
-                  autoFocus
                 />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
