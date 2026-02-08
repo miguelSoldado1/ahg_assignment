@@ -2,17 +2,16 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetcher } from "@/lib/api";
+import { getNotes } from "@/lib/api";
 import { formatTimestamp } from "@/lib/formatters";
 import { useQueryState } from "nuqs";
 import useSWR from "swr";
 import { EmptyState } from "./empty-state";
 import { NoteCard } from "./note-card";
-import type { Note } from "@/db/schema";
 
 export function NotesList() {
   const [patientId] = useQueryState("patient_id", { defaultValue: "", shallow: true });
-  const { data: notes, error, isLoading } = useSWR<Note[]>(patientId ? `/api/notes/${patientId}` : null, fetcher);
+  const { data: notes, error, isLoading } = useSWR(patientId ? patientId : null, getNotes);
 
   if (!patientId) {
     return (
