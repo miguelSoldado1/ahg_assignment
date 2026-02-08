@@ -1,16 +1,19 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-export const note = pgTable("note", {
+export const patient = pgTable("patient", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patientId: text("patient_id").notNull(),
-  content: text("content").notNull(),
+  name: text("name").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const patient = pgTable("patient", {
+export const note = pgTable("note", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
+  patientId: uuid("patient_id")
+    .notNull()
+    .references(() => patient.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });

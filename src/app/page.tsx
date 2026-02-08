@@ -6,9 +6,9 @@ export default function Page() {
   return (
     <main className="bg-muted/30 min-h-screen p-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <header>
+        <header className="space-y-1">
           <h1 className="text-foreground text-3xl font-bold">Patient Notes</h1>
-          <p className="text-muted-foreground mt-2">Create and manage patient medical notes</p>
+          <p className="text-muted-foreground">Create and manage patient medical notes</p>
         </header>
         <section aria-label="Patient selection">
           <PatientSelector />

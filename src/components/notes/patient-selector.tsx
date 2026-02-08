@@ -38,7 +38,7 @@ export function PatientSelector() {
             <Input
               id="patient-id"
               name="patient_id"
-              placeholder="Enter patient ID (e.g., PAT-12345)"
+              placeholder="Enter patient UUID (e.g., 550e8400-e29b-41d4-a716-446655440000)"
               defaultValue={patientId}
               aria-invalid={!!error}
               aria-describedby={error ? "patient-id-error" : undefined}

@@ -17,7 +17,7 @@ export function NoteCard({ title, content, timestamp }: NoteCardProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground text-sm">{content}</p>
+        <p className="text-muted-foreground text-sm whitespace-pre-wrap">{content}</p>
       </CardContent>
     </Card>
   );
