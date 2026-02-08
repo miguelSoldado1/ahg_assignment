@@ -15,6 +15,7 @@ A full-stack application for managing medical notes for patients, built with Nex
 
 - Next.js 16, TypeScript, PostgreSQL (Neon), Drizzle ORM
 - React Hook Form + Zod, SWR, Tailwind CSS v4, shadcn/ui
+- Vitest for unit testing
 
 ## Getting Started
 
@@ -48,10 +49,12 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Architecture
+### Nice to Have
 
-- **Clean separation**: API routes, database layer, UI components, utilities
-- **Validation**: Zod schemas on both client and server
+- Replace patient select with combobox + server-side search for scalability
+- Search and filter notes by content/date
+- Rate limiting and CSRF protection
+- Real-time collaboration featuresth client and server
 - **Error handling**: Custom try-catch wrapper with user-friendly messages
 - **Data fetching**: SWR for caching and automatic revalidation
 
@@ -68,4 +71,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 - Replace patient select with combobox + server-side search for scalability
 - Search and filter notes
-- Rate limiting and CSRF protection
+- Rate limiting
