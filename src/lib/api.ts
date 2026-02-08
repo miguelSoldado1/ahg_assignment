@@ -54,3 +54,22 @@ export async function deleteNote(noteId: string, patientId: string): Promise<voi
     throw new Error(result.error || "Failed to delete note");
   }
 }
+
+export const createPatientSchema = z.object({
+  name: z.string().min(1, "Patient name is required").max(100, "Name is too long"),
+});
+
+export async function createPatient(data: z.infer<typeof createPatientSchema>): Promise<Patient> {
+  const response = await fetch("/api/patients", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to create patient");
+  }
+
+  return result;
+}
