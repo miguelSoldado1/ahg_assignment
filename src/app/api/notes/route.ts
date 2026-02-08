@@ -18,7 +18,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid input", details: validatedData.error }, { status: 400 });
     }
 
-    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, validatedData.data.patientId)).limit(1);
+    const [existingPatient] = await db
+      .select()
+      .from(patient)
+      .where(eq(patient.id, validatedData.data.patientId))
+      .limit(1);
     if (!existingPatient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
