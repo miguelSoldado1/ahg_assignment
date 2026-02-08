@@ -66,20 +66,6 @@ The project includes **29 unit tests** covering:
 
 All tests use Vitest with mocked database calls to ensure isolated, fast test execution.
 
-## Docker
-
-Build and run with Docker:
-
-```bash
-# Build the image
-docker build -t patient-notes .
-
-# Run the container
-docker run -p 3000:3000 -e DATABASE_URL=your_database_url patient-notes
-```
-
-The Dockerfile uses Next.js standalone output for optimized production builds.
-
 ## Architecture
 
 - **Clean separation**: API routes, database layer, UI components, utilities
