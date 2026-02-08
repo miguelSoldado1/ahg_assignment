@@ -1,5 +1,16 @@
 import { z } from "zod";
-import type { Note } from "@/db/schema.js";
+import type { Note, Patient } from "@/db/schema.js";
+
+export async function getPatients(): Promise<Patient[]> {
+  const response = await fetch("/api/patients");
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to fetch patients");
+  }
+
+  return result;
+}
 
 export async function getNotes(patientId: string): Promise<Note[]> {
   const response = await fetch(`/api/notes/${patientId}`);

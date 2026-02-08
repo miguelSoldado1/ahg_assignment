@@ -66,5 +66,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Nice to Have
 
+- Replace patient select with combobox + server-side search for scalability
 - Search and filter notes
 - Rate limiting and CSRF protection

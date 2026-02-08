@@ -1,52 +1,40 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getPatients } from "@/lib/api";
 import { useQueryState } from "nuqs";
-import { z } from "zod";
-
-const patientIdSchema = z.uuid("Invalid patient ID format. Expected a UUID.");
+import useSWR from "swr";
 
 export function PatientSelector() {
   const [patientId, setPatientId] = useQueryState("patient_id", { defaultValue: "", shallow: true });
-  const [error, setError] = useState<string | null>(null);
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const inputValue = formData.get("patient_id") as string;
-
-    const result = patientIdSchema.safeParse(inputValue);
-    if (!result.success) {
-      return setError(result.error.issues[0].message);
-    }
-
-    setError(null);
-    setPatientId(inputValue);
-  }
+  const { data: patients, isLoading } = useSWR("patients", getPatients);
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex items-end gap-4">
+        <div className="flex items-end gap-4">
           <Field className="flex-1">
-            <FieldLabel htmlFor="patient-id">Patient ID</FieldLabel>
-            <Input
-              id="patient-id"
-              name="patient_id"
-              placeholder="Enter patient UUID (e.g., 550e8400-e29b-41d4-a716-446655440000)"
-              defaultValue={patientId}
-              aria-invalid={!!error}
-              aria-describedby={error ? "patient-id-error" : undefined}
-            />
-            <FieldError id="patient-id-error">{error}</FieldError>
+            <FieldLabel htmlFor="patient-select">Select Patient</FieldLabel>
+            <Select value={patientId} onValueChange={setPatientId} disabled={isLoading}>
+              <SelectTrigger id="patient-select" className="w-full">
+                <SelectValue placeholder={isLoading ? "Loading patients..." : "Select a patient"} />
+              </SelectTrigger>
+              <SelectContent position="popper" side="bottom">
+                {patients?.map((patient) => (
+                  <SelectItem key={patient.id} value={patient.id}>
+                    {patient.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
-          <Button type="submit">Load Patient</Button>
-        </form>
+          <Button onClick={() => setPatientId("")} variant="outline" disabled={!patientId}>
+            Clear
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
