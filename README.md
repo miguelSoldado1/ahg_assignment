@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Patient Notes Module
+
+A full-stack application for managing medical notes for patients, built with Next.js, React, TypeScript, and PostgreSQL.
+
+## Features
+
+- **Backend API**: Create and retrieve patient notes with validation
+- **React Form**: Create notes with client-side validation
+- **Notes List**: Display all notes for a selected patient
+- **Database**: PostgreSQL with Drizzle ORM and type-safe schemas
+- **UI**: Responsive design with Tailwind CSS and shadcn/ui components
+- **Error Handling**: User-friendly error messages via toast notifications
+
+## Tech Stack
+
+- Next.js 16, TypeScript, PostgreSQL (Neon), Drizzle ORM
+- React Hook Form + Zod, SWR, Tailwind CSS v4, shadcn/ui
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Set up environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env` file:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# you can grab a quick neon postgres database url for testing in: https://neon.new
+DATABASE_URL=your_database_url_here
+```
 
-## Learn More
+### 3. Set up the database
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm db:push      # Push schema to database
+pnpm db:seed      # (Optional) Seed with sample data
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Run the development server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Architecture
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Clean separation**: API routes, database layer, UI components, utilities
+- **Validation**: Zod schemas on both client and server
+- **Error handling**: Custom try-catch wrapper with user-friendly messages
+- **Data fetching**: SWR for caching and automatic revalidation
+
+## Potential Improvements
+
+### High Priority
+
+- Authentication/authorization with better-auth
+- Edit and delete notes
+- Unit and E2E tests
+- Pagination for large note lists
+
+### Nice to Have
+
+- Search and filter notes
+- Rate limiting and CSRF protection
