@@ -49,12 +49,41 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Nice to Have
+### 5. Run tests
 
-- Replace patient select with combobox + server-side search for scalability
-- Search and filter notes by content/date
-- Rate limiting and CSRF protection
-- Real-time collaboration featuresth client and server
+```bash
+pnpm test:run     # Run tests once
+pnpm test         # Run tests in watch mode
+```
+
+## Testing
+
+The project includes **29 unit tests** covering:
+
+- **API Routes** (8 tests): POST /notes and GET /notes/:patientId endpoints with validation
+- **Validation Schemas** (10 tests): Zod schema validation for notes and patient IDs
+- **Formatters** (11 tests): Date and timestamp formatting utilities
+
+All tests use Vitest with mocked database calls to ensure isolated, fast test execution.
+
+## Docker
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t patient-notes .
+
+# Run the container
+docker run -p 3000:3000 -e DATABASE_URL=your_database_url patient-notes
+```
+
+The Dockerfile uses Next.js standalone output for optimized production builds.
+
+## Architecture
+
+- **Clean separation**: API routes, database layer, UI components, utilities
+- **Validation**: Zod schemas on both client and server
 - **Error handling**: Custom try-catch wrapper with user-friendly messages
 - **Data fetching**: SWR for caching and automatic revalidation
 
@@ -64,11 +93,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 - Authentication/authorization with better-auth
 - Edit notes and confirm delete dialog
-- Unit and E2E tests
+- E2E tests with Playwright
 - Pagination for large note lists
 
 ### Nice to Have
 
 - Replace patient select with combobox + server-side search for scalability
-- Search and filter notes
-- Rate limiting
+- Search and filter notes by content/date
+- Rate limiting and CSRF protection
+- Real-time collaboration features
