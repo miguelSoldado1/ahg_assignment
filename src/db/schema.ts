@@ -8,5 +8,15 @@ export const note = pgTable("note", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const patient = pgTable("patient", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export type Note = typeof note.$inferSelect;
 export type NewNote = typeof note.$inferInsert;
+
+export type Patient = typeof patient.$inferSelect;
+export type NewPatient = typeof patient.$inferInsert;
