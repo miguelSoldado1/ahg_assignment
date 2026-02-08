@@ -60,7 +60,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### High Priority
 
 - Authentication/authorization with better-auth
-- Edit and delete notes
+- Edit notes and confirm delete dialog
 - Unit and E2E tests
 - Pagination for large note lists
 

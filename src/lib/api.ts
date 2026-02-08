@@ -43,3 +43,14 @@ export async function createNote(data: z.infer<typeof createNoteSchema>): Promis
 
   return result;
 }
+
+export async function deleteNote(noteId: string, patientId: string): Promise<void> {
+  const response = await fetch(`/api/notes/${patientId}/${noteId}`, {
+    method: "DELETE",
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete note");
+  }
+}

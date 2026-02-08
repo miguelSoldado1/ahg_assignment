@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getNotes } from "@/lib/api";
-import { formatTimestamp } from "@/lib/formatters";
 import { useQueryState } from "nuqs";
 import useSWR from "swr";
 import { EmptyState } from "./empty-state";
@@ -71,16 +70,10 @@ export function NotesList() {
           </Badge>
         )}
       </div>
-
       {hasNotes ? (
         <div className="space-y-4">
           {notes.map((note) => (
-            <NoteCard
-              key={note.id}
-              title={note.title}
-              content={note.content}
-              timestamp={formatTimestamp(note.createdAt)}
-            />
+            <NoteCard key={note.id} note={note} patientId={patientId} />
           ))}
         </div>
       ) : (
