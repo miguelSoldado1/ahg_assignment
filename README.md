@@ -30,7 +30,7 @@ pnpm install
 Create a `.env` file:
 
 ```env
-# you can grab a quick neon postgres database url for testing in: https://neon.new
+# you can grab a quick neon postgres database url for testing at: https://neon.new
 DATABASE_URL=your_database_url_here
 ```
 
