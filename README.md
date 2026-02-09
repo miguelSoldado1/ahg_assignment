@@ -52,8 +52,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### 5. Run tests
 
 ```bash
-pnpm test:run     # Run tests once
-pnpm test         # Run tests in watch mode
+pnpm test
 ```
 
 ## Testing
