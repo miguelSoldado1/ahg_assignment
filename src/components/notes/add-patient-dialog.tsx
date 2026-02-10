@@ -18,10 +18,11 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2Icon, UserPlusIcon } from "lucide-react";
+import { UserPlusIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
+import { Spinner } from "../ui/spinner";
 
 const ERROR_TITLE = "Oops, something went wrong";
 
@@ -86,7 +87,7 @@ export function AddPatientDialog() {
             </Button>
           </DialogClose>
           <Button type="submit" form="add-patient-form" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && <Loader2Icon className="animate-spin" />}
+            {form.formState.isSubmitting && <Spinner />}
             Create Patient
           </Button>
         </DialogFooter>

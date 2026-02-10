@@ -14,6 +14,7 @@ import { useQueryState } from "nuqs";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
+import { Spinner } from "../ui/spinner";
 
 const noteFormSchema = z.object({
   title: z.string().min(1, "Note title is required").max(200, "Title is too long"),
@@ -96,7 +97,7 @@ export function NoteForm() {
       </CardContent>
       <CardFooter>
         <Button type="submit" form="note-form" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting && <Loader2Icon className="animate-spin" />}
+          {form.formState.isSubmitting && <Spinner />}
           {form.formState.isSubmitting ? "Saving..." : "Save Note"}
         </Button>
       </CardFooter>

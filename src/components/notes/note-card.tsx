@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/formatters";
 import { tryCatch } from "@/try-catch";
-import { PencilIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
+import { PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import { mutate } from "swr";
 import { Textarea } from "../ui/textarea";
+import { DeleteNoteButton } from "./delete-note-button";
 import { NoteActionButton } from "./note-action-button";
 import type { Note } from "@/db/schema";
 
@@ -22,21 +23,6 @@ export function NoteCard({ note, patientId }: NoteCardProps) {
   const [isPending, startTransition] = useTransition();
   const [content, setContent] = useState(note.content);
   const [isEditing, setIsEditing] = useState(false);
-
-  function handleDelete() {
-    startTransition(async () => {
-      const { error } = await tryCatch(deleteNote(note.id, patientId));
-      if (error) {
-        toast.error("Failed to delete note", {
-          description: error.message ?? "An unexpected error occurred. Please try again.",
-        });
-        return;
-      }
-
-      toast.success("Note deleted successfully");
-      mutate(patientId);
-    });
-  }
 
   function handleEdit() {
     if (!isEditing) {
@@ -80,9 +66,7 @@ export function NoteCard({ note, patientId }: NoteCardProps) {
           <CardTitle className="text-base">{note.title}</CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="secondary">{formatTimestamp(note.createdAt)}</Badge>
-            <NoteActionButton onClick={handleDelete} disabled={isPending || isEditing} aria-label="Delete note">
-              <Trash2Icon className="text-destructive" />
-            </NoteActionButton>
+            <DeleteNoteButton disabled={isPending || isEditing} noteId={note.id} patientId={patientId} />
             <NoteActionButton aria-label="Edit note" disabled={isPending} onClick={handleEdit}>
               {isEditing ? <SaveIcon /> : <PencilIcon />}
             </NoteActionButton>
