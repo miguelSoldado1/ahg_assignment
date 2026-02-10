@@ -1,8 +1,8 @@
 "use client";
 
+import { getNotes } from "@/api";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { getNotes } from "@/lib/api";
 import { useQueryState } from "nuqs";
 import useSWR from "swr";
 import { EmptyState } from "./empty-state";

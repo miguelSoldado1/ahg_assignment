@@ -1,10 +1,10 @@
 "use client";
 
+import { getPatients } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getPatients } from "@/lib/api";
 import { useQueryState } from "nuqs";
 import useSWR from "swr";
 

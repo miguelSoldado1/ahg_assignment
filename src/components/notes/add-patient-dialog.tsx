@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { createPatient, createPatientSchema } from "@/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createPatient, createPatientSchema } from "@/lib/api";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, UserPlusIcon } from "lucide-react";

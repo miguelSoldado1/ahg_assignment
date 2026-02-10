@@ -2,10 +2,10 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { deleteNote } from "@/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { deleteNote } from "@/lib/api";
 import { formatTimestamp } from "@/lib/formatters";
 import { tryCatch } from "@/try-catch";
 import { Trash2Icon } from "lucide-react";
