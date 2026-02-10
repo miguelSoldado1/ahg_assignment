@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2Icon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
