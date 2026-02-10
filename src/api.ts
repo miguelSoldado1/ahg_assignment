@@ -44,6 +44,27 @@ export async function createNote(data: z.infer<typeof createNoteSchema>): Promis
   return result;
 }
 
+export const updateNoteSchema = z.object({
+  content: z.string().min(1, "Note content is required").max(10000, "Note content is too long"),
+  patientId: z.string().min(1, "Patient ID is required"),
+  noteId: z.string().min(1, "Note ID is required"),
+});
+
+export async function updateNote(data: z.infer<typeof updateNoteSchema>): Promise<Note> {
+  const response = await fetch(`/api/patients/${data.patientId}/notes/${data.noteId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ content: data.content }),
+    headers: { "Content-Type": "application/json" },
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to update note");
+  }
+
+  return result;
+}
+
 export async function deleteNote(noteId: string, patientId: string): Promise<void> {
   const response = await fetch(`/api/patients/${patientId}/notes/${noteId}`, {
     method: "DELETE",

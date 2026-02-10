@@ -1,23 +1,27 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
-import { note } from "@/db/schema";
+import { note, patient } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ patientId: string; noteId: string }> }) {
+const paramsSchema = z.object({
+  patientId: z.uuid("Invalid patient ID format"),
+  noteId: z.uuid("Invalid note ID format"),
+});
+
+interface Context {
+  params: Promise<z.infer<typeof paramsSchema>>;
+}
+
+export async function DELETE(_req: Request, context: Context) {
   try {
-    const { patientId, noteId } = await params;
-
-    const noteIdValidation = z.uuid("Invalid note ID format").safeParse(noteId);
-    const patientIdValidation = z.uuid("Invalid patient ID format").safeParse(patientId);
-
-    if (!noteIdValidation.success) {
-      return NextResponse.json({ error: noteIdValidation.error.issues[0].message }, { status: 400 });
+    const params = await context.params;
+    const validatedParams = paramsSchema.safeParse(params);
+    if (!validatedParams.success) {
+      return NextResponse.json({ error: validatedParams.error }, { status: 400 });
     }
 
-    if (!patientIdValidation.success) {
-      return NextResponse.json({ error: patientIdValidation.error.issues[0].message }, { status: 400 });
-    }
+    const { patientId, noteId } = validatedParams.data;
 
     const [deletedNote] = await db
       .delete(note)
@@ -32,5 +36,43 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ pati
   } catch (error) {
     console.error("Failed to delete note:", error);
     return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
+  }
+}
+
+const updateNoteSchema = z.object({
+  content: z.string().min(1, "Note content is required").max(10000, "Note content is too long"),
+});
+
+export async function PATCH(req: Request, context: Context) {
+  try {
+    const params = await context.params;
+    const validatedParams = paramsSchema.safeParse(params);
+    if (!validatedParams.success) {
+      return NextResponse.json({ error: validatedParams.error }, { status: 400 });
+    }
+
+    const body = await req.json();
+    const validatedData = updateNoteSchema.safeParse(body);
+    if (!validatedData.success) {
+      return NextResponse.json({ error: "Invalid input", details: validatedData.error }, { status: 400 });
+    }
+
+    const { patientId, noteId } = validatedParams.data;
+
+    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, patientId)).limit(1);
+    if (!existingPatient) {
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
+    }
+
+    const [updatedNote] = await db
+      .update(note)
+      .set({ content: validatedData.data.content, updatedAt: new Date() })
+      .where(and(eq(note.id, noteId), eq(note.patientId, patientId)))
+      .returning();
+
+    return NextResponse.json(updatedNote, { status: 200 });
+  } catch (error) {
+    console.error("Failed to update note:", error);
+    return NextResponse.json({ error: "Failed to update note" }, { status: 500 });
   }
 }

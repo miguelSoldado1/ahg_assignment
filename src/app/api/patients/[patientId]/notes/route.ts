@@ -4,21 +4,25 @@ import { note, patient } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-interface Context {
-  params: Promise<{ patientId: string }>;
-}
+const paramsSchema = z.object({
+  patientId: z.uuid("Invalid patient ID format"),
+});
 
-const patientIdSchema = z.uuid("Invalid patient ID format");
+interface Context {
+  params: Promise<z.infer<typeof paramsSchema>>;
+}
 
 export async function GET(_request: Request, context: Context) {
   try {
-    const { patientId } = await context.params;
-    const validatedId = patientIdSchema.safeParse(patientId);
-    if (!validatedId.success) {
-      return NextResponse.json({ error: "Invalid patient ID", details: validatedId.error }, { status: 400 });
+    const params = await context.params;
+    const validatedParams = paramsSchema.safeParse(params);
+    if (!validatedParams.success) {
+      return NextResponse.json({ error: "Invalid patient ID", details: validatedParams.error }, { status: 400 });
     }
 
-    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, validatedId.data)).limit(1);
+    const patientId = validatedParams.data.patientId;
+
+    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, patientId)).limit(1);
     if (!existingPatient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
@@ -26,8 +30,8 @@ export async function GET(_request: Request, context: Context) {
     const notes = await db
       .select()
       .from(note)
-      .where(eq(note.patientId, validatedId.data))
-      .orderBy(desc(note.createdAt));
+      .where(eq(note.patientId, patientId))
+      .orderBy(desc(note.createdAt), desc(note.id));
     return NextResponse.json(notes, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch notes:", error);
@@ -42,10 +46,10 @@ const createNoteSchema = z.object({
 
 export async function POST(req: Request, context: Context) {
   try {
-    const { patientId } = await context.params;
-    const validatedId = patientIdSchema.safeParse(patientId);
-    if (!validatedId.success) {
-      return NextResponse.json({ error: "Invalid patient ID", details: validatedId.error }, { status: 400 });
+    const params = await context.params;
+    const validatedParams = paramsSchema.safeParse(params);
+    if (!validatedParams.success) {
+      return NextResponse.json({ error: "Invalid patient ID", details: validatedParams.error }, { status: 400 });
     }
 
     const body = await req.json();
@@ -54,14 +58,16 @@ export async function POST(req: Request, context: Context) {
       return NextResponse.json({ error: "Invalid input", details: validatedData.error }, { status: 400 });
     }
 
-    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, validatedId.data)).limit(1);
+    const patientId = validatedParams.data.patientId;
+
+    const [existingPatient] = await db.select().from(patient).where(eq(patient.id, patientId)).limit(1);
     if (!existingPatient) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     const [newNote] = await db
       .insert(note)
-      .values({ ...validatedData.data, patientId: validatedId.data })
+      .values({ ...validatedData.data, patientId: validatedParams.data.patientId })
       .returning();
 
     return NextResponse.json(newNote, { status: 201 });

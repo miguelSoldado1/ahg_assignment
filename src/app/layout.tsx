@@ -1,5 +1,6 @@
 import { Figtree, Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { Metadata } from "next";
 
@@ -30,7 +31,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={figtree.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <TooltipProvider>{children}</TooltipProvider>
+        </NuqsAdapter>
         <Toaster />
       </body>
     </html>
