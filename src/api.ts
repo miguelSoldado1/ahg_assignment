@@ -13,7 +13,7 @@ export async function getPatients(): Promise<Patient[]> {
 }
 
 export async function getNotes(patientId: string): Promise<Note[]> {
-  const response = await fetch(`/api/notes/${patientId}`);
+  const response = await fetch(`/api/patients/${patientId}/notes`);
   const result = await response.json();
 
   if (!response.ok) {
@@ -30,7 +30,7 @@ export const createNoteSchema = z.object({
 });
 
 export async function createNote(data: z.infer<typeof createNoteSchema>): Promise<Note> {
-  const response = await fetch("/api/notes", {
+  const response = await fetch(`/api/patients/${data.patientId}/notes`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" },
@@ -45,7 +45,7 @@ export async function createNote(data: z.infer<typeof createNoteSchema>): Promis
 }
 
 export async function deleteNote(noteId: string, patientId: string): Promise<void> {
-  const response = await fetch(`/api/notes/${patientId}/${noteId}`, {
+  const response = await fetch(`/api/patients/${patientId}/notes/${noteId}`, {
     method: "DELETE",
   });
   const result = await response.json();
