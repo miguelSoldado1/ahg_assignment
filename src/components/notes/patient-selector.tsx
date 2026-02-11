@@ -6,7 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
+import { XIcon } from "lucide-react";
 import useSWR from "swr";
+import { DeletePatientButton } from "./delete-patient-button";
 
 export function PatientSelector() {
   const { patientId, setPatientId } = useNotesNavigation();
@@ -31,9 +33,13 @@ export function PatientSelector() {
               </SelectContent>
             </Select>
           </Field>
-          <Button onClick={() => setPatientId("")} variant="outline" disabled={!patientId}>
-            Clear
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setPatientId("")} variant="outline" disabled={!patientId}>
+              <XIcon className="size-4" />
+              Clear
+            </Button>
+            <DeletePatientButton />
+          </div>
         </div>
       </CardContent>
     </Card>

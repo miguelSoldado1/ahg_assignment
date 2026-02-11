@@ -9,6 +9,10 @@ export const createPatientSchema = z.object({
   name: z.string().min(1, "Patient name is required").max(100, "Name is too long"),
 });
 
+export const deletePatientSchema = z.object({
+  patientId: z.uuid("Invalid patient ID format"),
+});
+
 // ============================================================================
 // API FUNCTIONS
 // ============================================================================
@@ -37,4 +41,13 @@ export async function createPatient(data: z.infer<typeof createPatientSchema>): 
   }
 
   return result;
+}
+
+export async function deletePatient(data: z.infer<typeof deletePatientSchema>): Promise<void> {
+  const response = await fetch(`/api/patients/${data.patientId}`, { method: "DELETE" });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete patient");
+  }
 }
