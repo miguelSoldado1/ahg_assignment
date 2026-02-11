@@ -12,8 +12,13 @@ export async function getPatients(): Promise<Patient[]> {
   return result;
 }
 
-export async function getNotes(patientId: string): Promise<Note[]> {
-  const response = await fetch(`/api/patients/${patientId}/notes`);
+interface GetNotesResponse {
+  notes: Note[];
+  total: number;
+}
+
+export async function getNotes(patientId: string, page: number = 1): Promise<GetNotesResponse> {
+  const response = await fetch(`/api/patients/${patientId}/notes?page=${page}`);
   const result = await response.json();
 
   if (!response.ok) {

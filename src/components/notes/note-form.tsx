@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryState } from "nuqs";
@@ -23,7 +24,7 @@ const noteFormSchema = z.object({
 const ERROR_TITLE = "Oops, something went wrong";
 
 export function NoteForm() {
-  const [patientId] = useQueryState("patient_id", { defaultValue: "", shallow: true });
+  const { patientId } = useNotesNavigation();
   const form = useForm<z.infer<typeof noteFormSchema>>({
     resolver: zodResolver(noteFormSchema),
     defaultValues: { title: "", content: "" },

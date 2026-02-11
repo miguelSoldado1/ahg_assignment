@@ -42,8 +42,7 @@ describe("Formatters", () => {
     it("should format old timestamps as localized date string", () => {
       const date = new Date("2026-01-01T12:00:00Z"); // More than 7 days ago
       const result = formatTimestamp(date);
-      // Check if it's a valid date string (format may vary by locale)
-      expect(result).toMatch(/\d{1,2}\/\d{1,2}\/\d{4}/);
+      expect(result).toBe("1/1/2026");
     });
 
     it("should handle timestamps in the future gracefully", () => {
@@ -71,13 +70,13 @@ describe("Formatters", () => {
       };
       const result = formatDate(date, options);
       expect(typeof result).toBe("string");
-      expect(result).toMatch(/February/);
+      expect(result).toBe("February 8, 2026");
     });
 
     it("should handle Date objects correctly", () => {
       const date = new Date("2026-01-01");
       const result = formatDate(date);
-      expect(result).toMatch(/\d{1,2}\/\d{1,2}\/\d{4}/);
+      expect(result).toBe("1/1/2026");
     });
   });
 });

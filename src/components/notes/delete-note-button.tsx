@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { deleteNote } from "@/api";
 import * as DialogCore from "@/components/ui/dialog";
+import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import { tryCatch } from "@/try-catch";
 import { Trash2Icon } from "lucide-react";
 import { mutate } from "swr";
@@ -20,6 +21,7 @@ interface DeleteNoteButtonProps {
 export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { setPage } = useNotesNavigation();
 
   function handleDelete() {
     startTransition(async () => {
@@ -34,6 +36,7 @@ export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButt
       toast.success("Note deleted successfully");
       setShowDeleteDialog(false);
       mutate(patientId);
+      setPage(1);
     });
   }
 

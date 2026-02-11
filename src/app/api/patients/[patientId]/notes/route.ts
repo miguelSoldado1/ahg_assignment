@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { note, patient } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const paramsSchema = z.object({
@@ -12,7 +12,15 @@ interface Context {
   params: Promise<z.infer<typeof paramsSchema>>;
 }
 
-export async function GET(_request: Request, context: Context) {
+const DEFAULT_PAGE_SIZE = 2;
+const DEFAULT_PAGE = 1;
+
+const searchParamsSchema = z.object({
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+});
+
+export async function GET(request: NextRequest, context: Context) {
   try {
     const params = await context.params;
     const validatedParams = paramsSchema.safeParse(params);
@@ -27,12 +35,28 @@ export async function GET(_request: Request, context: Context) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
+    const searchParams = Object.fromEntries(request.nextUrl.searchParams);
+    const validatedSearchParams = searchParamsSchema.safeParse(searchParams);
+    if (!validatedSearchParams.success) {
+      return NextResponse.json({ error: "Invalid parameters", details: validatedSearchParams.error }, { status: 400 });
+    }
+
+    const { page = DEFAULT_PAGE, limit = DEFAULT_PAGE_SIZE } = validatedSearchParams.data;
+
+    const [{ totalCount }] = await db
+      .select({ totalCount: sql<number>`count(*)` })
+      .from(note)
+      .where(eq(note.patientId, patientId));
+
     const notes = await db
       .select()
       .from(note)
       .where(eq(note.patientId, patientId))
-      .orderBy(desc(note.createdAt), desc(note.id));
-    return NextResponse.json(notes, { status: 200 });
+      .orderBy(desc(note.createdAt), desc(note.id))
+      .limit(limit)
+      .offset((page - 1) * limit);
+
+    return NextResponse.json({ notes, total: Math.ceil(totalCount / limit) }, { status: 200 });
   } catch (error) {
     console.error("Failed to fetch notes:", error);
     return NextResponse.json({ error: "Failed to fetch notes" }, { status: 500 });

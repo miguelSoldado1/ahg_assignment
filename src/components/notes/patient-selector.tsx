@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQueryState } from "nuqs";
+import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import useSWR from "swr";
 
 export function PatientSelector() {
-  const [patientId, setPatientId] = useQueryState("patient_id", { defaultValue: "", shallow: true });
+  const { patientId, setPatientId } = useNotesNavigation();
   const { data: patients, isLoading } = useSWR("patients", getPatients);
 
   return (
