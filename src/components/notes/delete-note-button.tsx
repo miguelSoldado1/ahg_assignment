@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { deleteNote } from "@/api/notes";
 import { DeleteDialog } from "@/components/delete-dialog";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
+import { ERROR_TITLE, SUCCESS_TITLE } from "@/lib/utils";
 import { tryCatch } from "@/try-catch";
 import { Trash2Icon } from "lucide-react";
 import { mutate } from "swr";
@@ -23,12 +24,12 @@ export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButt
   async function handleDelete() {
     const { error } = await tryCatch(deleteNote({ noteId, patientId }));
     if (error) {
-      return toast.error("Failed to delete note", {
+      return toast.error(ERROR_TITLE, {
         description: error.message ?? "An unexpected error occurred. Please try again.",
       });
     }
 
-    toast.success("Note deleted successfully");
+    toast.success(SUCCESS_TITLE, { description: "Note deleted successfully" });
     mutate([patientId, 1]);
     setShowDeleteDialog(false);
     setPage(1);

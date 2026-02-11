@@ -17,6 +17,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
+import { ERROR_TITLE, SUCCESS_TITLE } from "@/lib/utils";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlusIcon } from "lucide-react";
@@ -24,8 +25,6 @@ import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
 import { Spinner } from "../ui/spinner";
-
-const ERROR_TITLE = "Oops, something went wrong";
 
 export function AddPatientDialog() {
   const { setPatientId } = useNotesNavigation();
@@ -44,7 +43,7 @@ export function AddPatientDialog() {
       });
     }
 
-    toast.success("Patient created successfully");
+    toast.success(SUCCESS_TITLE, { description: "Patient created successfully" });
     setPatientId(userData.id);
     mutate("patients");
     form.reset();

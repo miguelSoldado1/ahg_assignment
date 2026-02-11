@@ -6,6 +6,7 @@ import { updateNote } from "@/api/notes";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/formatters";
+import { ERROR_TITLE, SUCCESS_TITLE } from "@/lib/utils";
 import { tryCatch } from "@/try-catch";
 import { PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import { mutate } from "swr";
@@ -32,7 +33,7 @@ export function NoteCard({ note, patientId }: NoteCardProps) {
     const trimmedContent = content.trim();
 
     if (!trimmedContent) {
-      return toast.error("Note content cannot be empty");
+      return toast.error(ERROR_TITLE, { description: "Note content cannot be empty" });
     }
 
     if (trimmedContent === note.content) {
@@ -42,13 +43,13 @@ export function NoteCard({ note, patientId }: NoteCardProps) {
     startTransition(async () => {
       const { error } = await tryCatch(updateNote({ content: trimmedContent, patientId: patientId, noteId: note.id }));
       if (error) {
-        toast.error("Failed to update note", {
+        toast.error(ERROR_TITLE, {
           description: error.message ?? "An unexpected error occurred. Please try again.",
         });
         return;
       }
 
-      toast.success("Note updated successfully");
+      toast.success(SUCCESS_TITLE, { description: "Note updated successfully" });
       setIsEditing(false);
       mutate([patientId, 1]);
     });

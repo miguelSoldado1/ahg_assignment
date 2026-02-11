@@ -9,14 +9,13 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
+import { ERROR_TITLE, SUCCESS_TITLE } from "@/lib/utils";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
 import { Spinner } from "../ui/spinner";
-
-const ERROR_TITLE = "Oops, something went wrong";
 
 const createNoteFormSchema = createNoteSchema.omit({ patientId: true });
 
@@ -46,7 +45,7 @@ export function NoteForm() {
       });
     }
 
-    toast.success("Note created successfully");
+    toast.success(SUCCESS_TITLE, { description: "Note created successfully" });
     mutate([patientId, 1]);
     form.reset();
   }
