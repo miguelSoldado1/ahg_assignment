@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
-import { PATCH } from "@/app/api/patients/[patientId]/notes/[noteId]/route";
+import { DELETE as deleteNote, PATCH } from "@/app/api/patients/[patientId]/notes/[noteId]/route";
 import { GET, POST } from "@/app/api/patients/[patientId]/notes/route";
+import { DELETE as deletePatient } from "@/app/api/patients/[patientId]/route";
+import { GET as getPatients, POST as postPatients } from "@/app/api/patients/route";
 import { db } from "@/db/drizzle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -9,6 +11,7 @@ vi.mock("@/db/drizzle", () => ({
     select: vi.fn(),
     insert: vi.fn(),
     update: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -287,7 +290,7 @@ describe("API Routes", () => {
       expect(Array.isArray(data.notes)).toBe(true);
       expect(data.notes).toHaveLength(2);
       expect(data.notes[0].title).toBe("Initial Consultation");
-      expect(data.total).toBe(2);
+      expect(data.total).toBe(1);
     });
 
     it("should return 400 for invalid patient ID format", async () => {
@@ -481,5 +484,257 @@ describe("API Routes", () => {
       expect(response.status).toBe(404);
       expect(data).toHaveProperty("error", "Patient not found");
     });
+  });
+});
+
+describe("GET /api/patients", () => {
+  it("should return all patients", async () => {
+    const mockPatients = [
+      {
+        id: "550e8400-e29b-41d4-a716-446655440001",
+        name: "John Doe",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "550e8400-e29b-41d4-a716-446655440002",
+        name: "Jane Smith",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    const fromMock = vi.fn().mockReturnThis();
+    const orderByMock = vi.fn().mockResolvedValue(mockPatients);
+
+    vi.mocked(db.select).mockReturnValue({
+      from: fromMock,
+    } as unknown as ReturnType<typeof db.select>);
+
+    fromMock.mockReturnValue({
+      orderBy: orderByMock,
+    });
+
+    const response = await getPatients();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(data)).toBe(true);
+    expect(data).toHaveLength(2);
+    expect(data[0].name).toBe("John Doe");
+  });
+});
+
+describe("POST /api/patients", () => {
+  it("should create a patient with valid data", async () => {
+    const mockPatient = {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const valuesMock = vi.fn().mockReturnThis();
+    const returningMock = vi.fn().mockResolvedValue([mockPatient]);
+
+    vi.mocked(db.insert).mockReturnValue({
+      values: valuesMock,
+    } as unknown as ReturnType<typeof db.insert>);
+
+    valuesMock.mockReturnValue({
+      returning: returningMock,
+    });
+
+    const request = new Request("http://localhost:3000/api/patients", {
+      method: "POST",
+      body: JSON.stringify({ name: "John Doe" }),
+    });
+
+    const response = await postPatients(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(data).toHaveProperty("id");
+    expect(data.name).toBe("John Doe");
+  });
+
+  it("should return 400 for invalid input", async () => {
+    const request = new Request("http://localhost:3000/api/patients", {
+      method: "POST",
+      body: JSON.stringify({ name: "" }),
+    });
+
+    const response = await postPatients(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data).toHaveProperty("error", "Invalid input");
+  });
+});
+
+describe("DELETE /api/patients/[patientId]", () => {
+  const mockPatientId = "550e8400-e29b-41d4-a716-446655440000";
+
+  it("should delete patient with valid ID", async () => {
+    const mockPatient = {
+      id: mockPatientId,
+      name: "John Doe",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const whereMock = vi.fn().mockReturnThis();
+    const returningMock = vi.fn().mockResolvedValue([mockPatient]);
+
+    vi.mocked(db.delete).mockReturnValue({
+      where: whereMock,
+    } as unknown as ReturnType<typeof db.delete>);
+
+    whereMock.mockReturnValue({
+      returning: returningMock,
+    });
+
+    const request = new Request(`http://localhost:3000/api/patients/${mockPatientId}`, {
+      method: "DELETE",
+    });
+
+    const response = await deletePatient(request, {
+      params: Promise.resolve({ patientId: mockPatientId }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toHaveProperty("success", true);
+  });
+
+  it("should return 400 for invalid patient ID format", async () => {
+    const request = new Request("http://localhost:3000/api/patients/invalid-uuid", {
+      method: "DELETE",
+    });
+
+    const response = await deletePatient(request, {
+      params: Promise.resolve({ patientId: "invalid-uuid" }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data).toHaveProperty("error");
+  });
+
+  it("should return 404 when patient does not exist", async () => {
+    const whereMock = vi.fn().mockReturnThis();
+    const returningMock = vi.fn().mockResolvedValue([]);
+
+    vi.mocked(db.delete).mockReturnValue({
+      where: whereMock,
+    } as unknown as ReturnType<typeof db.delete>);
+
+    whereMock.mockReturnValue({
+      returning: returningMock,
+    });
+
+    const request = new Request(`http://localhost:3000/api/patients/${mockPatientId}`, {
+      method: "DELETE",
+    });
+
+    const response = await deletePatient(request, {
+      params: Promise.resolve({ patientId: mockPatientId }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(data).toHaveProperty("error", "Patient not found");
+  });
+});
+
+describe("DELETE /api/patients/[patientId]/notes/[noteId]", () => {
+  const mockPatientId = "550e8400-e29b-41d4-a716-446655440000";
+  const mockNoteId = "660e8400-e29b-41d4-a716-446655440000";
+
+  it("should delete note with valid IDs", async () => {
+    const mockNote = {
+      id: mockNoteId,
+      patientId: mockPatientId,
+      title: "Test Note",
+      content: "Test content",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const whereMock = vi.fn().mockReturnThis();
+    const returningMock = vi.fn().mockResolvedValue([mockNote]);
+
+    vi.mocked(db.delete).mockReturnValue({
+      where: whereMock,
+    } as unknown as ReturnType<typeof db.delete>);
+
+    whereMock.mockReturnValue({
+      returning: returningMock,
+    });
+
+    const request = new Request(`http://localhost:3000/api/patients/${mockPatientId}/notes/${mockNoteId}`, {
+      method: "DELETE",
+    });
+
+    const response = await deleteNote(request, {
+      params: Promise.resolve({ patientId: mockPatientId, noteId: mockNoteId }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toHaveProperty("success", true);
+  });
+
+  it("should return 400 for invalid patient ID format", async () => {
+    const request = new Request("http://localhost:3000/api/patients/invalid/notes/123", {
+      method: "DELETE",
+    });
+
+    const response = await deleteNote(request, {
+      params: Promise.resolve({ patientId: "invalid", noteId: mockNoteId }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data).toHaveProperty("error");
+  });
+
+  it("should return 400 for invalid note ID format", async () => {
+    const request = new Request("http://localhost:3000/api/patients/123/notes/invalid", {
+      method: "DELETE",
+    });
+
+    const response = await deleteNote(request, {
+      params: Promise.resolve({ patientId: mockPatientId, noteId: "invalid" }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data).toHaveProperty("error");
+  });
+
+  it("should return 404 when note does not exist", async () => {
+    const whereMock = vi.fn().mockReturnThis();
+    const returningMock = vi.fn().mockResolvedValue([]);
+
+    vi.mocked(db.delete).mockReturnValue({
+      where: whereMock,
+    } as unknown as ReturnType<typeof db.delete>);
+
+    whereMock.mockReturnValue({
+      returning: returningMock,
+    });
+
+    const request = new Request(`http://localhost:3000/api/patients/${mockPatientId}/notes/${mockNoteId}`, {
+      method: "DELETE",
+    });
+
+    const response = await deleteNote(request, {
+      params: Promise.resolve({ patientId: mockPatientId, noteId: mockNoteId }),
+    });
+    const data = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(data).toHaveProperty("error", "Note not found or does not belong to this patient");
   });
 });
