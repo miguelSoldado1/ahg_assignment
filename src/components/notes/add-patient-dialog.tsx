@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlusIcon } from "lucide-react";
@@ -27,6 +28,7 @@ import { Spinner } from "../ui/spinner";
 const ERROR_TITLE = "Oops, something went wrong";
 
 export function AddPatientDialog() {
+  const { setPatientId } = useNotesNavigation();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof createPatientSchema>>({
     resolver: zodResolver(createPatientSchema),
@@ -35,7 +37,7 @@ export function AddPatientDialog() {
   });
 
   async function onSubmit(data: z.infer<typeof createPatientSchema>) {
-    const { error } = await tryCatch(createPatient(data));
+    const { error, data: userData } = await tryCatch(createPatient(data));
     if (error) {
       return toast.error(ERROR_TITLE, {
         description: error.message ?? "An unexpected error occurred while creating the patient. Please try again.",
@@ -43,6 +45,7 @@ export function AddPatientDialog() {
     }
 
     toast.success("Patient created successfully");
+    setPatientId(userData.id);
     mutate("patients");
     form.reset();
     setOpen(false);
