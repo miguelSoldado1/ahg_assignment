@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { toast } from "sonner";
-import { createNote } from "@/api";
+import { createNote, createNoteSchema } from "@/api/notes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -10,28 +11,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryState } from "nuqs";
 import { Controller, useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { z } from "zod";
 import { Spinner } from "../ui/spinner";
 
-const noteFormSchema = z.object({
-  title: z.string().min(1, "Note title is required").max(200, "Title is too long"),
-  content: z.string().min(1, "Note content is required").max(10000, "Note content is too long"),
-});
-
 const ERROR_TITLE = "Oops, something went wrong";
+
+const createNoteFormSchema = createNoteSchema.omit({ patientId: true });
 
 export function NoteForm() {
   const { patientId } = useNotesNavigation();
-  const form = useForm<z.infer<typeof noteFormSchema>>({
-    resolver: zodResolver(noteFormSchema),
+  const form = useForm<z.infer<typeof createNoteFormSchema>>({
+    resolver: zodResolver(createNoteFormSchema),
     defaultValues: { title: "", content: "" },
     mode: "onSubmit",
   });
 
-  async function onSubmit(data: z.infer<typeof noteFormSchema>) {
+  useEffect(() => {
+    form.reset();
+  }, [form, patientId]);
+
+  async function onSubmit(data: z.infer<typeof createNoteFormSchema>) {
     if (!patientId) {
       return toast.error(ERROR_TITLE, {
         description: "Patient ID is missing. Please select a patient before creating a note.",
@@ -46,7 +47,7 @@ export function NoteForm() {
     }
 
     toast.success("Note created successfully");
-    mutate(patientId);
+    mutate([patientId, 1]);
     form.reset();
   }
 

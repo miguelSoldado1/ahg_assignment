@@ -1,6 +1,6 @@
 "use client";
 
-import { getPatients } from "@/api";
+import { getAllPatients } from "@/api/patients";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -10,7 +10,7 @@ import useSWR from "swr";
 
 export function PatientSelector() {
   const { patientId, setPatientId } = useNotesNavigation();
-  const { data: patients, isLoading } = useSWR("patients", getPatients);
+  const { data: patients, isLoading } = useSWR("patients", getAllPatients);
 
   return (
     <Card>

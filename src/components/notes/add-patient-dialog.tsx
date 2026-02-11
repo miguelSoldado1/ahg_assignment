@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { createPatient, createPatientSchema } from "@/api";
+import { createPatient, createPatientSchema } from "@/api/patients";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

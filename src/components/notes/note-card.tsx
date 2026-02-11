@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { updateNote } from "@/api";
+import { updateNote } from "@/api/notes";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/formatters";
@@ -50,7 +50,7 @@ export function NoteCard({ note, patientId }: NoteCardProps) {
 
       toast.success("Note updated successfully");
       setIsEditing(false);
-      mutate(patientId);
+      mutate([patientId, 1]);
     });
   }
 

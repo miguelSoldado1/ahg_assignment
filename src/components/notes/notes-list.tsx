@@ -1,6 +1,6 @@
 "use client";
 
-import { getNotes } from "@/api";
+import { getNotes } from "@/api/notes";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
@@ -15,7 +15,7 @@ import { NoteCard } from "./note-card";
 export function NotesList() {
   const { patientId, page, setPage } = useNotesNavigation();
   const { data, error, isLoading } = useSWR(patientId ? [patientId, page] : null, ([patientId, page]) =>
-    getNotes(patientId, page),
+    getNotes({ patientId, page }),
   );
 
   if (!patientId) {

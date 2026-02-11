@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { deleteNote } from "@/api";
+import { deleteNote } from "@/api/notes";
 import * as DialogCore from "@/components/ui/dialog";
 import { useNotesNavigation } from "@/hooks/use-notes-navigation";
 import { tryCatch } from "@/try-catch";
@@ -25,7 +25,7 @@ export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButt
 
   function handleDelete() {
     startTransition(async () => {
-      const { error } = await tryCatch(deleteNote(noteId, patientId));
+      const { error } = await tryCatch(deleteNote({ noteId, patientId }));
       if (error) {
         toast.error("Failed to delete note", {
           description: error.message ?? "An unexpected error occurred. Please try again.",
@@ -35,7 +35,7 @@ export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButt
 
       toast.success("Note deleted successfully");
       setShowDeleteDialog(false);
-      mutate(patientId);
+      mutate([patientId, 1]);
       setPage(1);
     });
   }
