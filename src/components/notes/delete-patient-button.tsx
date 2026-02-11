@@ -31,7 +31,7 @@ export function DeletePatientButton() {
 
   return (
     <DeleteDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDelete}>
-      <Button variant="destructive">
+      <Button variant="destructive" disabled={!patientId}>
         <Trash2Icon className="size-4" />
         Delete
       </Button>
