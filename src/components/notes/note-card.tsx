@@ -15,10 +15,10 @@ import { DeleteNoteButton } from "./delete-note-button";
 import { NoteActionButton } from "./note-action-button";
 import type { Note } from "@/db/schema";
 
-interface NoteCardProps {
+type NoteCardProps = {
   note: Note;
   patientId: string;
-}
+};
 
 export function NoteCard({ note, patientId }: NoteCardProps) {
   const [isPending, startTransition] = useTransition();

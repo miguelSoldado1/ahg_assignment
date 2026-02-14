@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   description: "Create and manage patient medical notes",
 };
 
-interface RootLayoutProps {
+type RootLayoutProps = {
   children: React.ReactNode;
-}
+};
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (

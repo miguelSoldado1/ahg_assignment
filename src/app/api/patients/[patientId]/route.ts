@@ -8,9 +8,9 @@ const paramsSchema = z.object({
   patientId: z.uuid("Invalid patient ID format"),
 });
 
-interface Context {
+type Context = {
   params: Promise<z.infer<typeof paramsSchema>>;
-}
+};
 
 export async function DELETE(_req: Request, context: Context) {
   try {

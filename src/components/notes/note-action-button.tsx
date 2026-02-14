@@ -2,9 +2,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-interface ActionButtonProps extends React.ComponentProps<"button"> {
+type ActionButtonProps = React.ComponentProps<"button"> & {
   children: React.ReactNode;
-}
+};
 
 export function NoteActionButton({ children, className, "aria-label": ariaLabel, ...props }: ActionButtonProps) {
   const button = (
