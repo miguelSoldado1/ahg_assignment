@@ -1,3 +1,6 @@
+"use client";
+
+import { Suspense } from "react";
 import { AddPatientDialog } from "@/components/notes/add-patient-dialog";
 import { NoteForm } from "@/components/notes/note-form";
 import { NotesList } from "@/components/notes/notes-list";
@@ -6,8 +9,8 @@ import { ShieldPlusIcon } from "lucide-react";
 
 export default function Page() {
   return (
-    <main className="bg-muted/30 min-h-screen p-8">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <main className="bg-muted/30 mx-auto min-h-screen max-w-7xl space-y-8 p-8">
+      <Suspense>
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <ShieldPlusIcon className="text-foreground size-10" />
@@ -25,7 +28,7 @@ export default function Page() {
           <NoteForm />
           <NotesList />
         </section>
-      </div>
+      </Suspense>
     </main>
   );
 }
