@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { db } from "../src/db/drizzle";
 import { note, patient } from "../src/db/schema";
 
