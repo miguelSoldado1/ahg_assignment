@@ -9,7 +9,7 @@ import { ShieldPlusIcon } from "lucide-react";
 
 export default function Page() {
   return (
-    <main className="bg-muted/30 mx-auto min-h-screen max-w-7xl space-y-8 p-8">
+    <main className="mx-auto min-h-screen max-w-7xl space-y-8 p-8">
       <Suspense>
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">

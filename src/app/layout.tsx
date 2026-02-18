@@ -30,7 +30,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={figtree.variable}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-muted/30`}>
         <NuqsAdapter>
           <TooltipProvider>{children}</TooltipProvider>
         </NuqsAdapter>
