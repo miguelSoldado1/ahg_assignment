@@ -11,11 +11,11 @@ import { Trash2Icon } from "lucide-react";
 import { mutate } from "swr";
 import { NoteActionButton } from "./note-action-button";
 
-interface DeleteNoteButtonProps {
+type DeleteNoteButtonProps = {
   disabled?: boolean;
   noteId: string;
   patientId: string;
-}
+};
 
 export function DeleteNoteButton({ disabled, noteId, patientId }: DeleteNoteButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);

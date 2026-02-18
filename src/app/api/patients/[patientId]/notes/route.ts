@@ -8,9 +8,9 @@ const paramsSchema = z.object({
   patientId: z.uuid("Invalid patient ID format"),
 });
 
-interface Context {
+type Context = {
   params: Promise<z.infer<typeof paramsSchema>>;
-}
+};
 
 const DEFAULT_PAGE_SIZE = 2;
 const DEFAULT_PAGE = 1;

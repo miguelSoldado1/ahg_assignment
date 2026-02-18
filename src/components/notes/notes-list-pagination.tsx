@@ -2,11 +2,11 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Pagination, PaginationContent, PaginationItem } from "../ui/pagination";
 
-interface NotesPaginationProps {
+type NotesPaginationProps = {
   numberOfPages?: number;
   currentPage: number;
   setPage: (page: number) => void;
-}
+};
 
 export function NotesListPagination({ numberOfPages = 1, currentPage, setPage }: NotesPaginationProps) {
   return (
